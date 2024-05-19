@@ -2,17 +2,10 @@ package com.capgemini.wsb.persistence.entity;
 
 import com.capgemini.wsb.persistence.enums.TreatmentType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "MEDICAL_TREATMENT")
+@Table(name = "MedicalTreatment")
 public class MedicalTreatmentEntity {
 
 	@Id
@@ -22,8 +15,15 @@ public class MedicalTreatmentEntity {
 	@Column(nullable = false)
 	private String description;
 
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private TreatmentType type;
+
+	@ManyToOne(
+			fetch = FetchType.LAZY,
+			optional = false) // relacja dwustronna od strony VisitEntity
+	@JoinColumn(name = "VISIT_ID", nullable = false)
+	private DoctorEntity visit;
 
 	public Long getId() {
 		return id;
@@ -49,4 +49,7 @@ public class MedicalTreatmentEntity {
 		this.type = type;
 	}
 
+	public DoctorEntity getVisit() { return visit; }
+
+	public void setVisit(DoctorEntity visit) { this.visit = visit; }
 }

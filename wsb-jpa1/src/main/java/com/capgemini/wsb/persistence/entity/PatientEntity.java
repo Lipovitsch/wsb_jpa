@@ -1,18 +1,14 @@
 package com.capgemini.wsb.persistence.entity;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "PATIENT")
+@Table(name = "Patient")
 public class PatientEntity {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -26,6 +22,7 @@ public class PatientEntity {
 	@Column(nullable = false)
 	private String telephoneNumber;
 
+	@Column(nullable = false)
 	private String email;
 
 	@Column(nullable = false)
@@ -33,6 +30,22 @@ public class PatientEntity {
 
 	@Column(nullable = false)
 	private LocalDate dateOfBirth;
+
+	@Column(nullable = false)
+	private LocalDate dateOfRegistration;
+
+	@OneToOne(
+			cascade = CascadeType.ALL,
+			fetch = FetchType.LAZY,
+			optional = false) // relacja jednostronna od strony PatientEntity
+	@JoinColumn(name = "ADDRESS_ID", referencedColumnName = "id")
+	private AddressEntity address;
+
+	@OneToMany(
+			mappedBy = "patient",
+			cascade = CascadeType.ALL,
+			fetch = FetchType.LAZY) // relacja dwustronna od strony PatientEntity
+	private List<VisitEntity> visits;
 
 	public Long getId() {
 		return id;
@@ -42,9 +55,7 @@ public class PatientEntity {
 		this.id = id;
 	}
 
-	public String getFirstName() {
-		return firstName;
-	}
+	public String getFirstName() { return firstName; }
 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
@@ -90,4 +101,15 @@ public class PatientEntity {
 		this.dateOfBirth = dateOfBirth;
 	}
 
+	public LocalDate getDateOfRegistration() { return dateOfRegistration; }
+
+	public void setDateOfRegistration(LocalDate dateOfRegistration) { this.dateOfRegistration = dateOfRegistration; }
+
+	public AddressEntity getAddress() { return address; }
+
+	public void setAddress(AddressEntity address) { this.address = address; }
+
+	public List<VisitEntity> getVisits() { return visits; }
+
+	public void setVisits(List<VisitEntity> visits) { this.visits = visits; }
 }

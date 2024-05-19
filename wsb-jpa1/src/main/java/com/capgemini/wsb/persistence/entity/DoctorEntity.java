@@ -2,17 +2,11 @@ package com.capgemini.wsb.persistence.entity;
 
 import com.capgemini.wsb.persistence.enums.Specialization;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "DOCTOR")
+@Table(name = "Doctor")
 public class DoctorEntity {
 
 	@Id
@@ -28,6 +22,7 @@ public class DoctorEntity {
 	@Column(nullable = false)
 	private String telephoneNumber;
 
+	@Column(nullable = false)
 	private String email;
 
 	@Column(nullable = false)
@@ -36,6 +31,19 @@ public class DoctorEntity {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Specialization specialization;
+
+	@OneToOne(
+			cascade = CascadeType.ALL,
+			fetch = FetchType.LAZY,
+			optional = false) // relacja jednostronna od strony DoctorEntity
+	@JoinColumn(name = "ADDRESS_ID", referencedColumnName = "id")
+	private AddressEntity address;
+
+	@OneToMany(
+			mappedBy = "doctor",
+			cascade = CascadeType.ALL,
+			fetch = FetchType.LAZY) // relacja dwustronna od strony DoctorEntity
+	private List<VisitEntity> visits;
 
 	public Long getId() {
 		return id;
@@ -93,4 +101,11 @@ public class DoctorEntity {
 		this.specialization = specialization;
 	}
 
+	public AddressEntity getAddress() { return address; }
+
+	public void setAddress(AddressEntity address) { this.address = address; }
+
+	public List<VisitEntity> getVisits() { return visits; }
+
+	public void setVisits(List<VisitEntity> visits) { this.visits = visits; }
 }
